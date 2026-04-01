@@ -6,7 +6,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ExercicioActivity">
+    tools:context=".ExercicioFragment">
 
     <!-- ===== CONTEÚDO ORIGINAL DA TELA DE EXERCÍCIOS (não alterado) ===== -->
 
@@ -266,14 +266,5 @@
         app:layout_constraintVertical_bias="0.495"
         app:srcCompat="@drawable/exe2" />
 
-    <!-- ===== NOVO FOOTER (substitui os 4 ImageButtons + navigationbar) ===== -->
-
-    <com.example.footer_test.FooterNavigationView
-        android:id="@+id/footer_navigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

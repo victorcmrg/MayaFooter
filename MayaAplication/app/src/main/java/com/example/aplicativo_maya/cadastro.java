@@ -17,11 +17,9 @@ public class cadastro extends AppCompatActivity {
         botaoMudarTela.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Intent intent = new Intent(cadastro.this, Homepage.class);
-
+                Intent intent = new Intent(cadastro.this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
-
             }
         });
     }
