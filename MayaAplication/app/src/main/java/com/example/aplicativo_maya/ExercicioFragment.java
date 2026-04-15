@@ -1,5 +1,6 @@
 package com.example.aplicativo_maya;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,20 +14,15 @@ public class ExercicioFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_exercicio, container, false);
 
-        // AÇÃO ATUALIZADA: Como ListaExerciciosFragment agora é um Fragment pré-carregado,
-        // nós NÃO usamos Intent. Chamamos a MainActivity para mostrar a tela!
-        View.OnClickListener abrirDetalhe = v -> {
-            if (getActivity() instanceof MainActivity) {
-                ((MainActivity) getActivity()).abrirDetalheExercicio();
-            }
-        };
-
-        // Aplica a nova ação nos botões "OPEN"
+        // Botões OPEN que abrem a lista de exercícios (tela de detalhe — Activity normal)
         int[] btnIds = {R.id.btnExe1, R.id.btnExe2, R.id.btnExe3};
         for (int id : btnIds) {
             Button btn = view.findViewById(id);
             if (btn != null) {
-                btn.setOnClickListener(abrirDetalhe);
+                btn.setOnClickListener(v -> {
+                    Intent intent = new Intent(getActivity(), ListaExercicioActivity.class);
+                    startActivity(intent);
+                });
             }
         }
 

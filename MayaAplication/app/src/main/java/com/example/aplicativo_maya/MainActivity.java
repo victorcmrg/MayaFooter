@@ -21,21 +21,19 @@ public class MainActivity extends AppCompatActivity {
         footer = findViewById(R.id.footer_navigation);
 
         if (savedInstanceState == null) {
-            // 1. Criamos as instâncias de todas as telas
-            HomepageFragment home = new HomepageFragment();
-            ExercicioFragment exercicio = new ExercicioFragment();
-            PerfilFragment perfil = new PerfilFragment();
-            MuralFragment mural = new MuralFragment();
-            ListaExerciciosFragment listaExercicios = new ListaExerciciosFragment();
-
-            // 2. Fazemos UMA única transação: adicionamos todos e já escondemos
-            // os que não devem aparecer na tela inicial.
+            // 1ª transação: adiciona todos os fragments
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment_container, home, TAGS[0])
-                    .add(R.id.fragment_container, exercicio, TAGS[1]).hide(exercicio)
-                    .add(R.id.fragment_container, perfil, TAGS[2]).hide(perfil)
-                    .add(R.id.fragment_container, mural, TAGS[3]).hide(mural)
-                    .add(R.id.fragment_container, listaExercicios, "lista_exercicios").hide(listaExercicios)
+                    .add(R.id.fragment_container, new HomepageFragment(), TAGS[0])
+                    .add(R.id.fragment_container, new ExercicioFragment(), TAGS[1])
+                    .add(R.id.fragment_container, new PerfilFragment(), TAGS[2])
+                    .add(R.id.fragment_container, new MuralFragment(), TAGS[3])
+                    .commitNow(); // commita antes de esconder
+
+            // 2ª transação: esconde todos exceto o home
+            getSupportFragmentManager().beginTransaction()
+                    .hide(getSupportFragmentManager().findFragmentByTag(TAGS[1]))
+                    .hide(getSupportFragmentManager().findFragmentByTag(TAGS[2]))
+                    .hide(getSupportFragmentManager().findFragmentByTag(TAGS[3]))
                     .commitNow();
         }
 
@@ -48,71 +46,24 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
     }
-    
-// =========================================================================
-    // MÉTODOS DE NAVEGAÇÃO DA MAIN ACTIVITY
-    // =========================================================================
 
     public void showFragment(int index) {
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.setTransition(FragmentTransaction.TRANSIT_NONE); // Garante zero delay
-
-        Fragment listaExercicios = getSupportFragmentManager().findFragmentByTag("lista_exercicios");
-        Fragment exercicioPrincipal = getSupportFragmentManager().findFragmentByTag(TAGS[1]);
-
-        // 1. SE CLICAR NA MESMA ABA QUE JÁ ESTÁ:
         if (index == currentIndex) {
-            // Se for a aba de Exercícios (index 1) E a tela secundária estiver aberta:
-            if (index == 1 && listaExercicios != null && !listaExercicios.isHidden()) {
-                // Volta para a tela principal de exercícios instantaneamente
-                ft.hide(listaExercicios);
-                if (exercicioPrincipal != null) ft.show(exercicioPrincipal);
-                ft.commitNow();
-            }
-            return; // Encerra aqui
+            Fragment current = getSupportFragmentManager().findFragmentByTag(TAGS[index]);
+            if (current != null && !current.isHidden()) return;
         }
 
-        // 2. SE TROCAR PARA UMA ABA DIFERENTE:
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.setTransition(FragmentTransaction.TRANSIT_NONE);
+
         Fragment current = getSupportFragmentManager().findFragmentByTag(TAGS[currentIndex]);
-        Fragment next = getSupportFragmentManager().findFragmentByTag(TAGS[index]);
+        Fragment next    = getSupportFragmentManager().findFragmentByTag(TAGS[index]);
 
-        if (current != null) ft.hide(current); // Esconde a aba antiga
+        if (current != null) ft.hide(current);
+        if (next != null)    ft.show(next);
 
-        // Se a tela secundária de exercícios estava aberta, temos que garantir que ela seja escondida também!
-        if (listaExercicios != null && !listaExercicios.isHidden()) {
-            ft.hide(listaExercicios);
-        }
-
-        if (next != null) ft.show(next); // Mostra a nova aba
-
-        ft.commitNow(); // commitNow resolve o bug da tela branca
+        ft.commitNow();
         currentIndex = index;
         footer.setSelectedTab(index);
-    }
-
-    public void abrirDetalheExercicio() {
-        Fragment exercicioPrincipal = getSupportFragmentManager().findFragmentByTag(TAGS[1]);
-        Fragment listaExercicios = getSupportFragmentManager().findFragmentByTag("lista_exercicios");
-
-        if (exercicioPrincipal != null && listaExercicios != null) {
-            getSupportFragmentManager().beginTransaction()
-                    .setTransition(FragmentTransaction.TRANSIT_NONE) // Instantâneo
-                    .hide(exercicioPrincipal)
-                    .show(listaExercicios)
-                    .commitNow(); // Força a atualização síncrona na UI
-        }
-    }
-
-    public void voltarParaExercicioPrincipal() {
-        Fragment exercicioPrincipal = getSupportFragmentManager().findFragmentByTag(TAGS[1]);
-        Fragment listaExercicios = getSupportFragmentManager().findFragmentByTag("lista_exercicios");
-
-        if (exercicioPrincipal != null && listaExercicios != null) {
-            getSupportFragmentManager().beginTransaction()
-                    .setTransition(FragmentTransaction.TRANSIT_NONE) // Instantâneo
-                    .hide(listaExercicios)
-                    .show(exercicioPrincipal)
-                    .commitNow(); // Resolve o bug de deixar a tela vazia
-        }
     }
 }
